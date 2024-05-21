@@ -1,9 +1,11 @@
-import bodyParser from 'body-parser'
 import { config } from 'dotenv'
-import express from 'express'
-import TelegramBot from 'node-telegram-bot-api'
+import * as TelegramBot from 'node-telegram-bot-api'
+import * as express from 'express'
+import * as bodyParser from 'body-parser'
 
 config() // Load environment variables from .env file
+
+console.log('starting');
 
 // eslint-disable-next-line no-process-env
 const token = process.env.TELEGRAM_BOT_TOKEN
@@ -15,7 +17,7 @@ if (!token || !webhookUrl) {
 
 const bot = new TelegramBot(token)
 bot
-  .setWebHook(`${webhookUrl}/bot${token}`)
+  .setWebHook(`https://c86e-31-187-78-43.ngrok-free.app/bot7035379281:AAF4_DtybdfGF_kR1TSg004XbfpTjbtr1g0`)
   .then(() => print(`Webhook set to ${webhookUrl}/bot${token}`))
   .catch(() => {
     throw new Error(`Failed to set webhook to ${webhookUrl}/bot${token}`)
@@ -48,7 +50,8 @@ bot.on('message', async msg => {
 })
 
 // eslint-disable-next-line no-process-env
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT || 9000
+print(`Starting server on port ${PORT}`)
 app.listen(PORT, () => {
   print(`Express server is listening on port ${PORT}`)
 })
