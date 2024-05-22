@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.errorLike = void 0;
+exports.errorLike = exports.print = void 0;
 const body_parser_1 = __importDefault(require("body-parser"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const express_1 = __importDefault(require("express"));
@@ -42,15 +42,31 @@ app.post(`/bot${token}`, (req, res) => __awaiter(void 0, void 0, void 0, functio
     try {
         const body = req.body;
         print(`Received a message: ${JSON.stringify(req.body)}`);
-        bot.processUpdate(body);
+        // bot.processUpdate(body)
+        if (((_a = body.callback_query) === null || _a === void 0 ? void 0 : _a.data) === 'getFlair') {
+            print('get user wallet');
+            return;
+        }
         const msg = body.channel_post;
         print(`Received a message in chat ${JSON.stringify(msg)}`);
-        print(`Received a message in chat ${msg.sender_chat.id}: ${msg.text}`);
-        yield bot.sendMessage(msg.chat.id, `Received your message: ${(_a = msg.text) !== null && _a !== void 0 ? _a : 'empty'}`);
         const chatId = msg.chat.id;
         if (msg.text !== undefined) {
-            const chatInfo = yield bot.getChat(chatId);
-            yield bot.sendMessage(chatId, `Chat info:\nName: ${chatInfo.title}\nID: ${chatInfo.id}\nType: ${chatInfo.type}`);
+            yield bot.sendMessage(msg.chat.id, `Received your message: ${msg.text}`);
+            // eslint-disable-next-line @typescript-eslint/no-var-requires
+            const imageUrl = require('./MintyTON/data/images/img.png');
+            const options = {
+                reply_markup: {
+                    inline_keyboard: [
+                        [
+                            {
+                                text: 'Get Flair',
+                                callback_data: 'getFlair',
+                            },
+                        ],
+                    ],
+                },
+            };
+            yield bot.sendPhoto(chatId, imageUrl, Object.assign(Object.assign({}, options), { caption: 'Flaunt your community pride with our MarathonRunners flair! Your key to personalized rewards A TON-tastic NFT!' }));
         }
         res.sendStatus(200);
     }
@@ -69,6 +85,7 @@ function print(message) {
     // eslint-disable-next-line no-console
     console.log(message);
 }
+exports.print = print;
 function errorLike(err, fallbackMessage) {
     const { message, stack, reason } = err;
     return {

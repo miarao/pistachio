@@ -1,4 +1,4 @@
-import { OpenedWallet } from 'utils'
+import { OpenedWallet } from './utils'
 
 export async function waitSeqno(seqno: number, wallet: OpenedWallet) {
   for (let attempt = 0; attempt < 10; attempt++) {

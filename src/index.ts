@@ -34,17 +34,37 @@ app.post(`/bot${token}`, async (req, res) => {
   try {
     const body = req.body satisfies TelegramBot.Update
     print(`Received a message: ${JSON.stringify(req.body)}`)
-    bot.processUpdate(body)
+    // bot.processUpdate(body)
+    if (body.callback_query?.data === 'getFlair') {
+      print('get user wallet')
+      return
+    }
+
     const msg = body.channel_post satisfies TelegramBot.Message
     print(`Received a message in chat ${JSON.stringify(msg)}`)
-    print(`Received a message in chat ${msg.sender_chat.id}: ${msg.text}`)
-    await bot.sendMessage(msg.chat.id, `Received your message: ${msg.text ?? 'empty'}`)
     const chatId = msg.chat.id
 
     if (msg.text !== undefined) {
-      const chatInfo = await bot.getChat(chatId)
-
-      await bot.sendMessage(chatId, `Chat info:\nName: ${chatInfo.title}\nID: ${chatInfo.id}\nType: ${chatInfo.type}`)
+      await bot.sendMessage(msg.chat.id, `Received your message: ${msg.text}`)
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const imageUrl = require('./MintyTON/data/images/img.png')
+      const options = {
+        reply_markup: {
+          inline_keyboard: [
+            [
+              {
+                text: 'Get Flair',
+                callback_data: 'getFlair',
+              },
+            ],
+          ],
+        },
+      }
+      await bot.sendPhoto(chatId, imageUrl, {
+        ...options,
+        caption:
+          'Flaunt your community pride with our MarathonRunners flair! Your key to personalized rewards A TON-tastic NFT!',
+      })
     }
     res.sendStatus(200)
   } catch (error) {
@@ -71,7 +91,7 @@ interface ErrorLike {
   reason?: string
 }
 
-function errorLike(err: unknown, fallbackMessage?: string): ErrorLike {
+export function errorLike(err: unknown, fallbackMessage?: string): ErrorLike {
   const { message, stack, reason } = err as ErrorLike
   return {
     message: typeof message === 'string' ? message : fallbackMessage,
