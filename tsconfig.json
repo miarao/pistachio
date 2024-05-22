@@ -1,22 +1,14 @@
 {
   "compilerOptions": {
-    "sourceMap": true,
-    "target": "es2015",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "target": "ES6",
+    "module": "commonjs",
+    "outDir": "./dist",
+    "rootDir": "./src",
     "strict": true,
-    "module": "esnext",
-    "moduleResolution": "Node",
-    "isolatedModules": true,
-    "jsx": "react-jsx",
-    "noEmit": true,
-    "plugins": [
-      {
-        "name": "typescript-plugin-css-modules",
-        "options": {
-          "customTemplate": "./utils/customTemplate/index.js"
-        }
-      }
-    ]
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": ["node_modules"]
 }

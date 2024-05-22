@@ -1,14 +1,14 @@
-import { config } from 'dotenv'
-import * as TelegramBot from 'node-telegram-bot-api'
-import * as express from 'express'
-import * as bodyParser from 'body-parser'
+import bodyParser from 'body-parser'
+import dotenv from 'dotenv'
+import express from 'express'
+import TelegramBot from 'node-telegram-bot-api'
 
-config() // Load environment variables from .env file
-
-console.log('starting');
+// Load environment variables from .env file
+dotenv.config()
 
 // eslint-disable-next-line no-process-env
 const token = process.env.TELEGRAM_BOT_TOKEN
+// eslint-disable-next-line no-process-env
 const webhookUrl = process.env.TELEGRAM_WEBHOOK_URL
 
 if (!token || !webhookUrl) {
@@ -16,41 +16,45 @@ if (!token || !webhookUrl) {
 }
 
 const bot = new TelegramBot(token)
+
 bot
-  .setWebHook(`https://c86e-31-187-78-43.ngrok-free.app/bot7035379281:AAF4_DtybdfGF_kR1TSg004XbfpTjbtr1g0`)
-  .then(() => print(`Webhook set to ${webhookUrl}/bot${token}`))
+  .setWebHook(`${webhookUrl}/bot${token}`)
+  .then(() => print(`Webhook set to ${webhookUrl}/bot***`))
   .catch(() => {
-    throw new Error(`Failed to set webhook to ${webhookUrl}/bot${token}`)
+    throw new Error(`Failed to set webhook to ${webhookUrl}/bot***`)
   })
+
+// bot.on('message', async msg => {
+// })
 
 const app = express()
 app.use(bodyParser.json())
 
-app.post(`/bot${token}`, (req, res) => {
-  bot.processUpdate(req.body)
-  res.sendStatus(200)
-})
+app.post(`/bot${token}`, async (req, res) => {
+  try {
+    const body = req.body satisfies TelegramBot.Update
+    print(`Received a message: ${JSON.stringify(req.body)}`)
+    bot.processUpdate(body)
+    const msg = body.channel_post satisfies TelegramBot.Message
+    print(`Received a message in chat ${JSON.stringify(msg)}`)
+    print(`Received a message in chat ${msg.sender_chat.id}: ${msg.text}`)
+    await bot.sendMessage(msg.chat.id, `Received your message: ${msg.text ?? 'empty'}`)
+    const chatId = msg.chat.id
 
-bot.on('message', async msg => {
-  const chatId = msg.chat.id
-  const chatImageId = msg.chat.photo?.big_file_id
-  let chatImage
-  if (chatImageId) {
-    chatImage = await bot.getFile(chatImageId)
-    if (chatImage) {
-      await bot.sendPhoto(chatId, chatImage.file_id)
+    if (msg.text !== undefined) {
+      const chatInfo = await bot.getChat(chatId)
+
+      await bot.sendMessage(chatId, `Chat info:\nName: ${chatInfo.title}\nID: ${chatInfo.id}\nType: ${chatInfo.type}`)
     }
-  }
-
-  if (msg.text !== undefined) {
-    const chatInfo = await bot.getChat(chatId)
-
-    await bot.sendMessage(chatId, `Chat info:\nName: ${chatInfo.title}\nID: ${chatInfo.id}\nType: ${chatInfo.type}`)
+    res.sendStatus(200)
+  } catch (error) {
+    print(`Error: ${errorLike(error)}`)
+    res.sendStatus(400)
   }
 })
 
 // eslint-disable-next-line no-process-env
-const PORT = process.env.PORT || 9000
+const PORT = process.env.PORT || 8080
 print(`Starting server on port ${PORT}`)
 app.listen(PORT, () => {
   print(`Express server is listening on port ${PORT}`)
@@ -59,4 +63,19 @@ app.listen(PORT, () => {
 function print(message: string) {
   // eslint-disable-next-line no-console
   console.log(message)
+}
+
+interface ErrorLike {
+  message?: string
+  stack?: string
+  reason?: string
+}
+
+export function errorLike(err: unknown, fallbackMessage?: string): ErrorLike {
+  const { message, stack, reason } = err as ErrorLike
+  return {
+    message: typeof message === 'string' ? message : fallbackMessage,
+    stack: typeof stack === 'string' ? stack : undefined,
+    reason: typeof reason === 'string' ? reason : undefined,
+  }
 }
