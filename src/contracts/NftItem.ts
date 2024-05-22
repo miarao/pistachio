@@ -1,8 +1,7 @@
-import { TonClient } from 'ton'
-import { Address, beginCell, Cell, internal, SendMode, toNano } from 'ton-core'
-
-import { OpenedWallet } from '../utils'
-import { mintParams, NftCollection } from './NftCollection'
+import { TonClient } from "ton";
+import { Address, beginCell, Cell, internal, SendMode, toNano } from "ton-core";
+import { OpenedWallet } from "utils";
+import { NftCollection, mintParams } from "./NftCollection";
 
 export class NftItem {
   private collection: NftCollection
