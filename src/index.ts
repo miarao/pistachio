@@ -1,7 +1,4 @@
-import bodyParser from 'body-parser'
 import dotenv from 'dotenv'
-import express from 'express'
-import TelegramBot from 'node-telegram-bot-api'
 
 import { mintMotherfucker } from './nft-utils'
 
