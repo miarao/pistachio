@@ -10,14 +10,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.encodeOffChainContent = exports.openWallet = void 0;
-const ton_crypto_1 = require("ton-crypto");
 const ton_1 = require("ton");
+const ton_crypto_1 = require("ton-crypto");
 function openWallet(mnemonic, testnet) {
     return __awaiter(this, void 0, void 0, function* () {
         const keyPair = yield (0, ton_crypto_1.mnemonicToPrivateKey)(mnemonic);
-        const toncenterBaseEndpoint = testnet
-            ? "https://testnet.toncenter.com"
-            : "https://toncenter.com";
+        const toncenterBaseEndpoint = testnet ? 'https://testnet.toncenter.com' : 'https://toncenter.com';
         const client = new ton_1.TonClient({
             endpoint: `${toncenterBaseEndpoint}/api/v2/jsonRPC`,
             apiKey: process.env.TONCENTER_API_KEY,
@@ -26,7 +24,7 @@ function openWallet(mnemonic, testnet) {
             workchain: 0,
             publicKey: keyPair.publicKey,
         });
-        let contract = client.open(wallet);
+        const contract = client.open(wallet);
         return { contract, keyPair };
     });
 }
