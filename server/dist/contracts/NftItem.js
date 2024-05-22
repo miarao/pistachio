@@ -24,7 +24,7 @@ class NftItem {
                 secretKey: wallet.keyPair.secretKey,
                 messages: [
                     (0, ton_core_1.internal)({
-                        value: "0.05",
+                        value: '0.05',
                         to: this.collection.address,
                         body: this.collection.createMintBody(params),
                     }),
@@ -37,10 +37,12 @@ class NftItem {
     static getAddressByIndex(collectionAddress, itemIndex) {
         return __awaiter(this, void 0, void 0, function* () {
             const client = new ton_1.TonClient({
-                endpoint: "https://testnet.toncenter.com/api/v2/jsonRPC",
+                endpoint: 'https://testnet.toncenter.com/api/v2/jsonRPC',
                 apiKey: process.env.TONCENTER_API_KEY,
             });
-            const response = yield client.runMethod(collectionAddress, "get_nft_address_by_index", [{ type: "int", value: BigInt(itemIndex) }]);
+            const response = yield client.runMethod(collectionAddress, 'get_nft_address_by_index', [
+                { type: 'int', value: BigInt(itemIndex) },
+            ]);
             return response.stack.readAddress();
         });
     }
@@ -52,12 +54,12 @@ class NftItem {
                 secretKey: wallet.keyPair.secretKey,
                 messages: [
                     (0, ton_core_1.internal)({
-                        value: "0.05",
+                        value: '0.05',
                         to: nftAddress,
                         body: this.createTransferBody({
                             newOwner,
                             responseTo: wallet.contract.address,
-                            forwardAmount: (0, ton_core_1.toNano)("0.02"),
+                            forwardAmount: (0, ton_core_1.toNano)('0.02'),
                         }),
                     }),
                 ],
@@ -74,7 +76,7 @@ class NftItem {
         msgBody.storeAddress(params.responseTo || null);
         msgBody.storeBit(false); // no custom payload
         msgBody.storeCoins(params.forwardAmount || 0);
-        msgBody.storeBit(0); // no forward_payload 
+        msgBody.storeBit(0); // no forward_payload
         return msgBody.endCell();
     }
 }

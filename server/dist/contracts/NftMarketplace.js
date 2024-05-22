@@ -23,7 +23,7 @@ class NftMarketplace {
                 secretKey: wallet.keyPair.secretKey,
                 messages: [
                     (0, ton_core_1.internal)({
-                        value: "1",
+                        value: '1',
                         to: this.address,
                         init: this.stateInit,
                     }),
@@ -47,7 +47,7 @@ class NftMarketplace {
         return dataCell.endCell();
     }
     createCodeCell() {
-        const NftMarketplaceCodeBoc = "te6cckEBBAEAbQABFP8A9KQT9LzyyAsBAgEgAgMAqtIyIccAkVvg0NMDAXGwkVvg+kDtRND6QDASxwXy4ZEB0x8BwAGOK/oAMAHU1DAh+QBwyMoHy//J0Hd0gBjIywXLAljPFlAE+gITy2vMzMlx+wCRW+IABPIwjvfM5w==";
+        const NftMarketplaceCodeBoc = 'te6cckEBBAEAbQABFP8A9KQT9LzyyAsBAgEgAgMAqtIyIccAkVvg0NMDAXGwkVvg+kDtRND6QDASxwXy4ZEB0x8BwAGOK/oAMAHU1DAh+QBwyMoHy//J0Hd0gBjIywXLAljPFlAE+gITy2vMzMlx+wCRW+IABPIwjvfM5w==';
         return ton_core_1.Cell.fromBase64(NftMarketplaceCodeBoc);
     }
 }

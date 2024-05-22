@@ -47,9 +47,7 @@ function updateMetadataFiles(metadataFolderPath, imagesIpfsHash) {
             const file = yield (0, promises_1.readFile)(filePath);
             const metadata = JSON.parse(file.toString());
             metadata.image =
-                index != files.length - 1
-                    ? `ipfs://${imagesIpfsHash}/${index}.jpg`
-                    : `ipfs://${imagesIpfsHash}/logo.jpg`;
+                index != files.length - 1 ? `ipfs://${imagesIpfsHash}/${index}.jpg` : `ipfs://${imagesIpfsHash}/logo.jpg`;
             yield (0, promises_1.writeFile)(filePath, JSON.stringify(metadata));
         }));
     });

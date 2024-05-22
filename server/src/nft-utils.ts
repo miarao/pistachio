@@ -1,36 +1,29 @@
-import * as dotenv from "dotenv";
+import { readdir } from 'fs/promises'
+import { toNano } from 'ton-core'
 
-import { toNano } from "ton-core";
-import { readdir } from "fs/promises";
-
-import { openWallet } from "./utils";
-import { waitSeqno } from "./delay";
-import { NftCollection } from "./contracts/NftCollection";
-import { NftItem } from "./contracts/NftItem";
-import { updateMetadataFiles, uploadFolderToIPFS } from "./metadata";
-import { GetGemsSaleData, NftSale } from "./contracts/NftSale";
-import { NftMarketplace } from "./contracts/NftMarketplace";
+import { NftCollection } from './contracts/NftCollection'
+import { NftItem } from './contracts/NftItem'
+import { NftMarketplace } from './contracts/NftMarketplace'
+import { waitSeqno } from './delay'
+import { updateMetadataFiles, uploadFolderToIPFS } from './metadata'
+import { openWallet } from './utils'
 
 export async function mintMotherfucker(flare: string) {
-  const metadataFolderPath = './data/metadata/';
-  const imagesFolderPath = './data/images/';
+  const metadataFolderPath = './data/metadata/'
+  const imagesFolderPath = './data/images/'
 
-  const wallet = await openWallet(process.env.MNEMONIC!.split(" "), true);
+  const wallet = await openWallet(process.env.MNEMONIC!.split(' '), true)
 
-  console.log("Started uploading images to IPFS...");
-  const imagesIpfsHash = await uploadFolderToIPFS(imagesFolderPath);
-  console.log(
-    `Successfully uploaded the pictures to ipfs: https://gateway.pinata.cloud/ipfs/${imagesIpfsHash}`
-  );
+  console.log('Started uploading images to IPFS...')
+  const imagesIpfsHash = await uploadFolderToIPFS(imagesFolderPath)
+  console.log(`Successfully uploaded the pictures to ipfs: https://gateway.pinata.cloud/ipfs/${imagesIpfsHash}`)
 
-  console.log("Started uploading metadata files to IPFS...");
-  await updateMetadataFiles(metadataFolderPath, imagesIpfsHash);
-  const metadataIpfsHash = await uploadFolderToIPFS(metadataFolderPath);
-  console.log(
-    `Successfully uploaded the metadata to ipfs: https://gateway.pinata.cloud/ipfs/${metadataIpfsHash}`
-  );
+  console.log('Started uploading metadata files to IPFS...')
+  await updateMetadataFiles(metadataFolderPath, imagesIpfsHash)
+  const metadataIpfsHash = await uploadFolderToIPFS(metadataFolderPath)
+  console.log(`Successfully uploaded the metadata to ipfs: https://gateway.pinata.cloud/ipfs/${metadataIpfsHash}`)
 
-  console.log("Start deploy of nft collection...");
+  console.log('Start deploy of nft collection...')
   const collectionData = {
     ownerAddress: wallet.contract.address,
     royaltyPercent: 0.05, // 0.05 = 5%
@@ -38,38 +31,38 @@ export async function mintMotherfucker(flare: string) {
     nextItemIndex: 0,
     collectionContentUrl: `ipfs://${metadataIpfsHash}/collection.json`,
     commonContentUrl: `ipfs://${metadataIpfsHash}/`,
-  };
-  const collection = new NftCollection(collectionData);
-  let seqno = await collection.deploy(wallet);
-  console.log(`Collection deployed: ${collection.address}`);
-  await waitSeqno(seqno, wallet);
+  }
+  const collection = new NftCollection(collectionData)
+  let seqno = await collection.deploy(wallet)
+  console.log(`Collection deployed: ${collection.address}`)
+  await waitSeqno(seqno, wallet)
 
   // Deploy nft items
-  const files = await readdir(metadataFolderPath);
+  const files = await readdir(metadataFolderPath)
 
-  seqno = await collection.topUpBalance(wallet, files.length);
-  await waitSeqno(seqno, wallet);
-  console.log(`Balance top-upped`);
+  seqno = await collection.topUpBalance(wallet, files.length)
+  await waitSeqno(seqno, wallet)
+  console.log(`Balance top-upped`)
 
-  console.log(`Start deploy of NFT`);
+  console.log(`Start deploy of NFT`)
   const mintParams = {
     queryId: 0,
     itemOwnerAddress: wallet.contract.address,
     itemIndex: 0,
-    amount: toNano("0.05"),
+    amount: toNano('0.05'),
     commonContentUrl: files[0],
-  };
-  
-  const nftItem = new NftItem(collection);
-  seqno = await nftItem.deploy(wallet, mintParams);
-  console.log(`Successfully deployed NFT`);
-  await waitSeqno(seqno, wallet);
+  }
 
-  console.log("Start deploy of new marketplace  ");
-  const marketplace = new NftMarketplace(wallet.contract.address);
-  seqno = await marketplace.deploy(wallet);
-  await waitSeqno(seqno, wallet);
-  console.log("Successfully deployed new marketplace");
+  const nftItem = new NftItem(collection)
+  seqno = await nftItem.deploy(wallet, mintParams)
+  console.log(`Successfully deployed NFT`)
+  await waitSeqno(seqno, wallet)
+
+  console.log('Start deploy of new marketplace  ')
+  const marketplace = new NftMarketplace(wallet.contract.address)
+  seqno = await marketplace.deploy(wallet)
+  await waitSeqno(seqno, wallet)
+  console.log('Successfully deployed new marketplace')
 
   // const nftToSaleAddress = await NftItem.getAddressByIndex(collection.address, 0);
   // const saleData: GetGemsSaleData = {

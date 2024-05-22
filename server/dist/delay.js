@@ -15,13 +15,14 @@ function waitSeqno(seqno, wallet) {
         for (let attempt = 0; attempt < 10; attempt++) {
             yield sleep(2000);
             const seqnoAfter = yield wallet.contract.getSeqno();
-            if (seqnoAfter == seqno + 1)
+            if (seqnoAfter == seqno + 1) {
                 break;
+            }
         }
     });
 }
 exports.waitSeqno = waitSeqno;
 function sleep(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
 exports.sleep = sleep;
