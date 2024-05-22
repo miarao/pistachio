@@ -60,7 +60,7 @@ app.listen(PORT, () => {
   print(`Express server is listening on port ${PORT}`)
 })
 
-function print(message: string) {
+export function print(message: string) {
   // eslint-disable-next-line no-console
   console.log(message)
 }
@@ -71,7 +71,7 @@ interface ErrorLike {
   reason?: string
 }
 
-export function errorLike(err: unknown, fallbackMessage?: string): ErrorLike {
+function errorLike(err: unknown, fallbackMessage?: string): ErrorLike {
   const { message, stack, reason } = err as ErrorLike
   return {
     message: typeof message === 'string' ? message : fallbackMessage,
