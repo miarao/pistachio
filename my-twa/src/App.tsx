@@ -4,8 +4,7 @@ import { useTonConnect } from './hooks/useTonConnect'
 import { Box, Button, Container } from '@mui/material'
 import WalletAddressInput from './wallet-address-input.tsx'
 import { useState } from 'react'
-import { address, Address } from '@ton/core'
-import * as axios from 'axios'
+import axios from 'axios'
 
 interface ErrorLike {
   message?: string
@@ -34,14 +33,15 @@ function App() {
 
   print(`App started with connected? ${connected} and walletAddress=${walletAddress}`)
 
-  const notifyBot = async (address: string) => {
+  const notifyBot = async () => {
     try {
-      await axios.post('https://https://995f-31-187-78-44.ngrok-free.app/bot7035379281:AAF4_DtybdfGF_kR1TSg004XbfpTjbtr1g0', {
-        message: `address ${address}`
+      const response = await axios.post('https://c86e-31-187-78-43.ngrok-free.app/bot7035379281:AAF4_DtybdfGF_kR1TSg004XbfpTjbtr1g0', {
+        message: `New wallet address: ${walletAddress}`
       })
       print(`Notification sent for wallet address: ${walletAddress}`)
+      print(response.data)
     } catch (error) {
-      print(`Error sending notification to bot ${errorLike(error, 'Unknown error')}`)
+      print(`Error sending notification to bot for wallet address: ${walletAddress} - ${JSON.stringify(errorLike(error))}`)
     }
   }
 
