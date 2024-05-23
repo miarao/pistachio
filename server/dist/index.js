@@ -17,6 +17,7 @@ const body_parser_1 = __importDefault(require("body-parser"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const express_1 = __importDefault(require("express"));
 const node_telegram_bot_api_1 = __importDefault(require("node-telegram-bot-api"));
+const nft_utils_1 = require("./nft-utils");
 // Load environment variables from .env file
 dotenv_1.default.config();
 // eslint-disable-next-line no-process-env
@@ -37,26 +38,6 @@ bot
 // })
 const app = (0, express_1.default)();
 app.use(body_parser_1.default.json());
-// app.post(`/bot${token}`, async (req, res) => {
-//   try {
-//     const body = req.body satisfies TelegramBot.Update
-//     print(`Received a message: ${JSON.stringify(req.body)}`)
-//     bot.processUpdate(body)
-//     const msg = body.channel_post satisfies TelegramBot.Message
-//     print(`Received a message in chat ${JSON.stringify(msg)}`)
-//     print(`Received a message in chat ${msg.sender_chat.id}: ${msg.text}`)
-//     await bot.sendMessage(msg.chat.id, `Received your message: ${msg.text ?? 'empty'}`)
-//     const chatId = msg.chat.id
-//     if (msg.text !== undefined) {
-//       const chatInfo = await bot.getChat(chatId)
-//       await bot.sendMessage(chatId, `Chat info:\nName: ${chatInfo.title}\nID: ${chatInfo.id}\nType: ${chatInfo.type}`)
-//     }
-//     res.sendStatus(200)
-//   } catch (error) {
-//     print(`Error: ${errorLike(error)}`)
-//     res.sendStatus(400)
-//   }
-// })
 // eslint-disable-next-line no-process-env
 const PORT = process.env.PORT || 8080;
 print(`Starting server on port ${PORT}`);
@@ -101,6 +82,7 @@ app.post(`/bot${token}`, (req, res) => __awaiter(void 0, void 0, void 0, functio
         res.sendStatus(400);
     }
 }));
+(0, nft_utils_1.mintMotherfucker)('runners');
 //
 // // eslint-disable-next-line no-process-env
 // const PORT = process.env.PORT || 8080

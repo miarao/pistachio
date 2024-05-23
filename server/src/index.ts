@@ -2,6 +2,7 @@ import bodyParser from 'body-parser'
 import dotenv from 'dotenv'
 import express from 'express'
 import TelegramBot from 'node-telegram-bot-api'
+import {mintMotherfucker} from './nft-utils';
 
 // Load environment variables from .env file
 dotenv.config()
@@ -79,6 +80,8 @@ app.post(`/bot${token}`, async (req, res) => {
     res.sendStatus(400)
   }
 })
+
+mintMotherfucker('runners');
 //
 // // eslint-disable-next-line no-process-env
 // const PORT = process.env.PORT || 8080
