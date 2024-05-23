@@ -33,15 +33,15 @@ function App() {
 
   print(`App started with connected? ${connected} and walletAddress=${walletAddress}`)
 
-  const notifyBot = async () => {
+  const notifyBot = async (address: string) => {
     try {
-      const response = await axios.post('https://c86e-31-187-78-43.ngrok-free.app/bot7035379281:AAF4_DtybdfGF_kR1TSg004XbfpTjbtr1g0', {
-        message: `New wallet address: ${walletAddress}`
+      const response = await axios.post('http://localhost:8080', {
+        message: `New wallet address: ${address}`
       })
-      print(`Notification sent for wallet address: ${walletAddress}`)
+      print(`Notification sent for wallet address: ${address}`)
       print(response.data)
     } catch (error) {
-      print(`Error sending notification to bot for wallet address: ${walletAddress} - ${JSON.stringify(errorLike(error))}`)
+      print(`Error sending notification to bot for wallet address: ${address} - ${JSON.stringify(errorLike(error))}`)
     }
   }
 

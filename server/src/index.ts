@@ -2,7 +2,8 @@ import bodyParser from 'body-parser'
 import dotenv from 'dotenv'
 import express from 'express'
 import TelegramBot from 'node-telegram-bot-api'
-import {mintMotherfucker} from './nft-utils';
+
+import { mintMotherfucker } from './nft-utils'
 
 // Load environment variables from .env file
 dotenv.config()
@@ -25,9 +26,6 @@ bot
     throw new Error(`Failed to set webhook to ${webhookUrl}/bot***`)
   })
 
-// bot.on('message', async msg => {
-// })
-
 const app = express()
 app.use(bodyParser.json())
 
@@ -46,42 +44,45 @@ app.post(`/bot${token}`, async (req, res) => {
     if (body.callback_query?.data === 'getFlair') {
       print('get user wallet')
       return
-    }
+    } else if (body.channel_post) {
+      const msg = body.channel_post satisfies TelegramBot.Message
+      print(`Received a message in chat ${JSON.stringify(msg)}`)
+      const chatId = msg?.chat?.id
 
-    const msg = body.channel_post satisfies TelegramBot.Message
-    print(`Received a message in chat ${JSON.stringify(msg)}`)
-    const chatId = msg.chat.id
-
-    if (msg.text !== undefined) {
-      await bot.sendMessage(msg.chat.id, `Received your message: ${msg.text}`)
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
-      const imageUrl = require('./MintyTON/data/images/img.png')
-      const options = {
-        reply_markup: {
-          inline_keyboard: [
-            [
-              {
-                text: 'Get Flair',
-                callback_data: 'getFlair',
-              },
+      if (msg.text !== undefined) {
+        await bot.sendMessage(msg.chat.id, `Received your message: ${msg.text}`)
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        const imageUrl = require('../data/images/logo.jpg')
+        const options = {
+          reply_markup: {
+            inline_keyboard: [
+              [
+                {
+                  text: 'Get Flair',
+                  callback_data: 'getFlair',
+                },
+              ],
             ],
-          ],
-        },
+          },
+        }
+        await bot.sendPhoto(chatId, imageUrl, {
+          ...options,
+          caption:
+            'Flaunt your community pride with our MarathonRunners flair! Your key to personalized rewards A TON-tastic NFT!',
+        })
       }
-      await bot.sendPhoto(chatId, imageUrl, {
-        ...options,
-        caption:
-          'Flaunt your community pride with our MarathonRunners flair! Your key to personalized rewards A TON-tastic NFT!',
-      })
+
+      res.sendStatus(200)
+    } else {
+      print(`unhandled message: ${JSON.stringify(body)}`)
     }
-    res.sendStatus(200)
   } catch (error) {
-    print(`Error: ${errorLike(error)}`)
+    print(`Error: ${JSON.stringify(errorLike(error))} received message: ${JSON.stringify(req.body)}`)
     res.sendStatus(400)
   }
 })
 
-mintMotherfucker('runners');
+mintMotherfucker('runners')
 //
 // // eslint-disable-next-line no-process-env
 // const PORT = process.env.PORT || 8080

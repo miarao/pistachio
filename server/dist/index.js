@@ -34,8 +34,6 @@ bot
     .catch(() => {
     throw new Error(`Failed to set webhook to ${webhookUrl}/bot***`);
 });
-// bot.on('message', async msg => {
-// })
 const app = (0, express_1.default)();
 app.use(body_parser_1.default.json());
 // eslint-disable-next-line no-process-env
@@ -45,7 +43,7 @@ app.listen(PORT, () => {
     print(`Express server is listening on port ${PORT}`);
 });
 app.post(`/bot${token}`, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
+    var _a, _b;
     try {
         const body = req.body;
         print(`Received a message: ${JSON.stringify(req.body)}`);
@@ -54,31 +52,36 @@ app.post(`/bot${token}`, (req, res) => __awaiter(void 0, void 0, void 0, functio
             print('get user wallet');
             return;
         }
-        const msg = body.channel_post;
-        print(`Received a message in chat ${JSON.stringify(msg)}`);
-        const chatId = msg.chat.id;
-        if (msg.text !== undefined) {
-            yield bot.sendMessage(msg.chat.id, `Received your message: ${msg.text}`);
-            // eslint-disable-next-line @typescript-eslint/no-var-requires
-            const imageUrl = require('./MintyTON/data/images/img.png');
-            const options = {
-                reply_markup: {
-                    inline_keyboard: [
-                        [
-                            {
-                                text: 'Get Flair',
-                                callback_data: 'getFlair',
-                            },
+        else if (body.channel_post) {
+            const msg = body.channel_post;
+            print(`Received a message in chat ${JSON.stringify(msg)}`);
+            const chatId = (_b = msg === null || msg === void 0 ? void 0 : msg.chat) === null || _b === void 0 ? void 0 : _b.id;
+            if (msg.text !== undefined) {
+                yield bot.sendMessage(msg.chat.id, `Received your message: ${msg.text}`);
+                // eslint-disable-next-line @typescript-eslint/no-var-requires
+                const imageUrl = require('../data/images/logo.jpg');
+                const options = {
+                    reply_markup: {
+                        inline_keyboard: [
+                            [
+                                {
+                                    text: 'Get Flair',
+                                    callback_data: 'getFlair',
+                                },
+                            ],
                         ],
-                    ],
-                },
-            };
-            yield bot.sendPhoto(chatId, imageUrl, Object.assign(Object.assign({}, options), { caption: 'Flaunt your community pride with our MarathonRunners flair! Your key to personalized rewards A TON-tastic NFT!' }));
+                    },
+                };
+                yield bot.sendPhoto(chatId, imageUrl, Object.assign(Object.assign({}, options), { caption: 'Flaunt your community pride with our MarathonRunners flair! Your key to personalized rewards A TON-tastic NFT!' }));
+            }
+            res.sendStatus(200);
         }
-        res.sendStatus(200);
+        else {
+            print(`unhandled message: ${JSON.stringify(body)}`);
+        }
     }
     catch (error) {
-        print(`Error: ${errorLike(error)}`);
+        print(`Error: ${JSON.stringify(errorLike(error))} received message: ${JSON.stringify(req.body)}`);
         res.sendStatus(400);
     }
 }));
